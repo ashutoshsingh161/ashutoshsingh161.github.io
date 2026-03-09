@@ -56,6 +56,17 @@ body::before {
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
+/* Mouse trail canvas */
+#dotTrail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
 /* ===== NAVIGATION ===== */
 nav {
   position: fixed;
@@ -777,10 +788,13 @@ footer .heart { color: var(--accent-warm); }
 </head>
 <body>
 
+<!-- Mouse Trail Canvas -->
+<canvas id="dotTrail"></canvas>
+
 <!-- Navigation -->
 <nav id="navbar">
   <div class="nav-inner">
-    <a href="#" class="logo">Ashutosh <span>Singh | e-Portfolio</span></a>
+    <a href="#" class="logo">Ashutosh <span>S.</span></a>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#education">Education</a></li>
@@ -867,10 +881,10 @@ footer .heart { color: var(--accent-warm); }
     <div class="edu-card anim">
       <div class="icon-box">🎓</div>
       <div>
-        <h3>Ph.D. (Water Resources Development & Management)</h3>
+        <h3>Ph.D. (Electrical Engineering)</h3>
         <div class="inst">Indian Institute of Technology Roorkee</div>
         <div class="meta">Pursuing · Supervisor: Prof. T. R. Chelliah</div>
-        <p class="thesis-title"> Thesis Title: "Sustainable System Development by Integration of Renewable Energy Sources into Hydropower System"</p>
+        <p class="thesis-title">"Sustainable System Development by Integration of Renewable Energy Sources into Hydropower System"</p>
       </div>
     </div>
     <div class="edu-card anim">
@@ -879,7 +893,6 @@ footer .heart { color: var(--accent-warm); }
         <h3>M.Tech (Hydro-Electric Systems)</h3>
         <div class="inst">Indian Institute of Technology Roorkee</div>
         <div class="meta">2021 · CGPA: 8.54 / 10</div>
-        <p class="thesis-title"> M.tech Thesis: "Analysis of Floating Solar PV Systems"</p>
       </div>
     </div>
   </div>
@@ -991,7 +1004,7 @@ footer .heart { color: var(--accent-warm); }
 
 <!-- Footer -->
 <footer>
-  <p>© 2026 <strong>Ashutosh Singh</strong> · Technology Enthusiast · IIT Roorkee &nbsp;<span class="heart">♦</span></p>
+  <p>© 2026 <strong>Ashutosh Singh</strong> · PhD Researcher · IIT Roorkee &nbsp;<span class="heart">♦</span></p>
 </footer>
 
 <script>
@@ -1014,6 +1027,77 @@ document.querySelectorAll('.nav-links a').forEach(a => {
     document.getElementById('navbar').classList.remove('mob-open');
   });
 });
+
+// ===== SUBTLE DOT TRAIL EFFECT =====
+(function() {
+  const canvas = document.getElementById('dotTrail');
+  const ctx = canvas.getContext('2d');
+  let width, height, mouseX = -100, mouseY = -100;
+  const dots = [];
+  const MAX_DOTS = 35;
+  const COLORS = [
+    'rgba(26, 107, 90, ',   // accent green
+    'rgba(200, 149, 108, ', // warm copper
+    'rgba(28, 37, 65, ',    // navy
+  ];
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Track mouse position
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    // Spawn a new dot on each move
+    if (dots.length < MAX_DOTS) {
+      dots.push({
+        x: mouseX,
+        y: mouseY,
+        radius: Math.random() * 4 + 2,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        alpha: 0.45,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: (Math.random() - 0.5) * 0.8,
+        decay: Math.random() * 0.008 + 0.006
+      });
+    }
+  });
+
+  // Hide trail when mouse leaves the window
+  window.addEventListener('mouseout', () => {
+    mouseX = -100;
+    mouseY = -100;
+  });
+
+  function animate() {
+    ctx.clearRect(0, 0, width, height);
+
+    for (let i = dots.length - 1; i >= 0; i--) {
+      const d = dots[i];
+      d.x += d.vx;
+      d.y += d.vy;
+      d.alpha -= d.decay;
+
+      if (d.alpha <= 0) {
+        dots.splice(i, 1);
+        continue;
+      }
+
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+      ctx.fillStyle = d.color + d.alpha + ')';
+      ctx.fill();
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+})();
 </script>
 
 </body>
