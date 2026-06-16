@@ -56,10 +56,7 @@ body::before {
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-/* Mouse trail canvas */
-#dotTrail {
-  position: fixed;
-  top: 0;
+
   left: 0;
   width: 100%;
   height: 100%;
@@ -788,8 +785,6 @@ footer .heart { color: var(--accent-warm); }
 </head>
 <body>
 
-<!-- Mouse Trail Canvas -->
-<canvas id="dotTrail"></canvas>
 
 <!-- Navigation -->
 <nav id="navbar">
@@ -1028,18 +1023,6 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   });
 });
 
-// ===== SUBTLE DOT TRAIL EFFECT =====
-(function() {
-  const canvas = document.getElementById('dotTrail');
-  const ctx = canvas.getContext('2d');
-  let width, height, mouseX = -100, mouseY = -100;
-  const dots = [];
-  const MAX_DOTS = 35;
-  const COLORS = [
-    'rgba(26, 107, 90, ',   // accent green
-    'rgba(200, 149, 108, ', // warm copper
-    'rgba(28, 37, 65, ',    // navy
-  ];
 
   function resize() {
     width = canvas.width = window.innerWidth;
